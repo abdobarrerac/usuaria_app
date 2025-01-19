@@ -1,4 +1,4 @@
-name: Deploy Flutter Web App
+name: Deploy to GitHub Pages
 on:
   push:
     branches: [ deployment ]
@@ -7,29 +7,13 @@ permissions:
   contents: write
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.16.5'
-          channel: 'stable'
-          cache: true
-      
-      - name: Install dependencies
-        run: |
-          cd usuaria_flutter
-          flutter pub get
-      
-      - name: Build Flutter Web
-        run: |
-          cd usuaria_flutter
-          flutter build web --release --base-href /usuaria_app/
-      
-      - name: Deploy to GitHub Pages
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
