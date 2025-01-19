@@ -3,22 +3,35 @@ on:
   push:
     branches: [ deployment ]
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: subosito/flutter-action@v2
+      - uses: actions/checkout@v3
+      
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.x'
+          flutter-version: '3.16.5'
           channel: 'stable'
-      - name: Build Flutter Web
+          cache: true
+      
+      - name: Install dependencies
         run: |
           cd usuaria_flutter
           flutter pub get
-          flutter build web --release
+      
+      - name: Build Flutter Web
+        run: |
+          cd usuaria_flutter
+          flutter build web --release --base-href /usuaria_app/
+      
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./usuaria_flutter/build/web
+          force_orphan: true
